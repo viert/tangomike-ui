@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/main.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -10,5 +10,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.directive('focus', { mounted: (el) => el.focus() })
 
 app.mount('#app')
