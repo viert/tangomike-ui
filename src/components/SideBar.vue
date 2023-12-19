@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const open = ref(true)
+const open = ref(false)
 </script>
 
 <style lang="scss">

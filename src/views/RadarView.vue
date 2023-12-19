@@ -1,6 +1,29 @@
 <template>
   <div class="radar">
-    <div class="map" ref="mapContainer"></div>
+    <MapBox>
+      <MapGeoJSONSource source-id="aircraft" :data="store.aircraftGeoJSON">
+        <MapLayer
+          layer-id="planes-clustered"
+          layer-type="circle"
+          :filter="['has', 'point_count']"
+          :paint="planeClusterPaint"
+        />
+        <MapLayer
+          layer-id="planes-clustered-count"
+          layer-type="symbol"
+          :filter="['has', 'point_count']"
+          :layout="planeClusterCount"
+          :paint="{ 'text-color': 'white' }"
+        />
+        <MapLayer
+          layer-id="planes-unclustered"
+          layer-type="symbol"
+          :filter="['!has', 'point_count']"
+          :layout="planeLayout"
+          @click="onPlaneClick"
+        />
+      </MapGeoJSONSource>
+    </MapBox>
     <SideBar>
       <NavBar></NavBar>
     </SideBar>
@@ -8,34 +31,36 @@
 </template>
 
 <script setup lang="ts">
-import SideBar from '@/components/SideBar.vue'
-import { Map, MapStyle, config } from '@maptiler/sdk'
-import { shallowRef, onMounted, onUnmounted, markRaw, type ShallowRef } from 'vue'
 import '@maptiler/sdk/dist/maptiler-sdk.css'
+import SideBar from '@/components/SideBar.vue'
 import NavBar from '@/components/NavBar.vue'
+import MapBox from '@/components/map/MapBox.vue'
+import { onMounted, onUnmounted } from 'vue'
+import { useFlightStore } from '@/stores/flights'
+import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
+import { planeClusterPaint, planeClusterCount, planeLayout, type LayerEvent } from '@/maplib'
+import MapLayer from '@/components/map/MapLayer.vue'
 
-const mapContainer: ShallowRef<HTMLElement | null> = shallowRef(null)
-const map: ShallowRef<Map | null> = shallowRef(null)
+const store = useFlightStore()
+
+function onPlaneClick(e: LayerEvent) {
+  if (e.features) {
+    e.features.forEach((feat) => {
+      const flightId: string | null = feat.properties.flight_id
+      if (flightId) {
+        store.select(flightId)
+      }
+    })
+  }
+}
 
 onMounted(() => {
-  config.apiKey = 'Sgh2cI4VgHs03O2yMbry'
+  store.start()
+})
 
-  const initialState = { lng: 15.2551, lat: 48.526, zoom: 4 }
-
-  map.value = markRaw(
-    new Map({
-      container: mapContainer.value!,
-      style: MapStyle.DATAVIZ,
-      center: [initialState.lng, initialState.lat],
-      zoom: initialState.zoom,
-      navigationControl: false,
-      geolocateControl: false
-    })
-  )
-}),
-  onUnmounted(() => {
-    map.value?.remove()
-  })
+onUnmounted(() => {
+  store.stop()
+})
 </script>
 
 <style lang="scss">
