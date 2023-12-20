@@ -23,6 +23,11 @@
           @click="onPlaneClick"
         />
       </MapGeoJSONSource>
+      <FlightTrack
+        v-if="store.selected?.track"
+        :data="store.selected?.track.points"
+        :style="defaultTrackStyle"
+      />
     </MapBox>
     <SideBar>
       <NavBar></NavBar>
@@ -40,6 +45,8 @@ import { useFlightStore } from '@/stores/flights'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
 import { planeClusterPaint, planeClusterCount, planeLayout, type LayerEvent } from '@/maplib'
 import MapLayer from '@/components/map/MapLayer.vue'
+import FlightTrack from '@/components/FlightTrack.vue'
+import { defaultTrackStyle } from '@/styler'
 
 const store = useFlightStore()
 

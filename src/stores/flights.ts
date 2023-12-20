@@ -42,6 +42,7 @@ export const useFlightStore = defineStore('flights', () => {
         flightEvent: (e: MessageEvent<string>) => {
           const event = JSON.parse(e.data) as FlightEvent
           if (event.eventType === 'close') {
+            delete active[flightId]
             unsubscribe(flightId)
           }
         }
@@ -62,6 +63,9 @@ export const useFlightStore = defineStore('flights', () => {
       sd.source.removeEventListener('flightEvent', sd.handlers.flightEvent)
       sd.source.close()
       delete subscriptions[flightId]
+    }
+    if (selected.value?.flight_id === flightId) {
+      select(null)
     }
   }
 
@@ -160,27 +164,5 @@ export const useFlightStore = defineStore('flights', () => {
     return data
   })
 
-  const trackGeoJSON = computed(() => {
-    if (!selected.value) return null
-    if (!selected.value.track) return null
-    const data: GeoJSON.FeatureCollection = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: {
-            callsign: selected.value.callsign,
-            flight_id: selected.value.flight_id
-          },
-          geometry: {
-            type: 'LineString',
-            coordinates: selected.value.track.points.map((point) => [point.lng, point.lat])
-          }
-        }
-      ]
-    }
-    return data
-  })
-
-  return { start, stop, active, aircraftGeoJSON, trackGeoJSON, selected, select }
+  return { start, stop, active, aircraftGeoJSON, selected, select }
 })
