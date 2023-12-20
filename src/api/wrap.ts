@@ -17,11 +17,10 @@ export function wrap<T>(response: Promise<AxiosResponse>, catch401 = false): Pro
             return null
           }
         }
-
         if (err.response.data) {
-          const data = err.response.data as { detail?: string }
-          if (data.detail) {
-            msgStore.error(data.detail)
+          const data = err.response.data as { error?: string }
+          if (data.error) {
+            msgStore.error(data.error)
           }
         } else {
           msgStore.error(`server error, status_code=${err.response.status}`)

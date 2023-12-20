@@ -19,7 +19,7 @@ const open = ref(false)
 </script>
 
 <style lang="scss">
-$sidebar-width: 350px;
+$sidebar-width: 300px;
 $sidebar-animation-time: 0.15s;
 
 .sidebar-wrap {

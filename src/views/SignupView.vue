@@ -14,6 +14,10 @@
         <label for="last_name">Last Name</label>
         <input v-model="lastName" type="text" class="form-control" id="last_name" />
       </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input v-model="email" type="text" class="form-control" id="email" />
+      </div>
       <hr />
       <div class="form-group">
         <label for="password">Password</label>
@@ -45,6 +49,7 @@ const password = ref('')
 const passwordConfirm = ref('')
 const firstName = ref('')
 const lastName = ref('')
+const email = ref('')
 
 async function onSubmit() {
   const user = await store.signup(
@@ -52,7 +57,8 @@ async function onSubmit() {
     password.value,
     passwordConfirm.value,
     firstName.value,
-    lastName.value
+    lastName.value,
+    email.value
   )
   if (user) {
     messages.info('User created successfully, you can now log in')

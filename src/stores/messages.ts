@@ -14,7 +14,7 @@ export interface Message {
   extraClasses: string
 }
 
-const MESSAGE_TTL = 80000
+const MESSAGE_TTL = 8000
 
 const CLASSES_MAP: Record<MessageType, string> = {
   [MessageType.Error]: 'alert-danger',

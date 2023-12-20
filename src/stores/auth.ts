@@ -37,9 +37,17 @@ export const useAuthStore = defineStore('auth', () => {
     password: string,
     passwordConfirm: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    email: string
   ) {
-    const user = await api.account.signup(username, password, passwordConfirm, firstName, lastName)
+    const user = await api.account.signup(
+      username,
+      password,
+      passwordConfirm,
+      firstName,
+      lastName,
+      email
+    )
     if (user) {
       authState.value = AuthState.NotLoggedIn
     }

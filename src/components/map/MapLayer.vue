@@ -46,7 +46,6 @@ function onMouseLeave(e: LayerEvent) {
 }
 
 function onClick(e: LayerEvent) {
-  console.log(e.features)
   emit('click', e)
 }
 

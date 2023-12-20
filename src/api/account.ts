@@ -17,14 +17,16 @@ export const account = {
     password: string,
     passwordConfirm: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    email: string
   ) {
     const payload = {
       username,
       password,
       password_confirm: passwordConfirm,
       first_name: firstName,
-      last_name: lastName
+      last_name: lastName,
+      email
     }
     return wrap<User>(Axios.post('/api/v1/account/signup', payload))
   },
