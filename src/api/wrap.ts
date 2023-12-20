@@ -16,7 +16,11 @@ export function wrap<T>(response: Promise<AxiosResponse>, catch401 = false): Pro
           if (catch401) {
             return null
           }
+        } else if (err.response.status >= 500) {
+          authStore.setAuthState(AuthState.Maintenance)
+          return null
         }
+
         if (err.response.data) {
           const data = err.response.data as { error?: string }
           if (data.error) {
