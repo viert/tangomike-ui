@@ -54,3 +54,8 @@ export interface FlightEvent {
   eventType: string
   eventData?: any
 }
+
+export interface StatusResponse<T> {
+  data: T
+  status: string
+}

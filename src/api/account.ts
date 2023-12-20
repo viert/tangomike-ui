@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import type { User } from './types'
+import type { StatusResponse, User } from './types'
 import { wrap } from './wrap'
 
 export const account = {
@@ -9,7 +9,7 @@ export const account = {
 
   async authenticate(username: string, password: string) {
     const payload = { username, password }
-    return wrap<User>(Axios.post('/api/v1/account/authenticate', payload))
+    return wrap<StatusResponse<User>>(Axios.post('/api/v1/account/authenticate', payload))
   },
 
   async signup(

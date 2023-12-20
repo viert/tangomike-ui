@@ -24,12 +24,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function authenticate(username: string, password: string) {
-    const user = await api.account.authenticate(username, password)
-    if (user) {
-      currentUser.value = user
+    const resp = await api.account.authenticate(username, password)
+    if (resp) {
+      currentUser.value = resp.data
       authState.value = AuthState.LoggedIn
+      return resp.data
     }
-    return user
+    return null
   }
 
   async function signup(
