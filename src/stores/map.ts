@@ -70,6 +70,7 @@ export const useMap = defineStore('map', () => {
     } else {
       if (map.value) {
         map.value.remove()
+        map.value = null
       }
     }
   })

@@ -8,6 +8,8 @@
         <li><span class="material-symbols-outlined"> search </span> Search</li>
       </RouterLink>
       <hr />
+      <TokenView />
+      <hr />
       <a @click.prevent="logout" href="#">
         <li><span class="material-symbols-outlined"> logout </span> Logout</li>
       </a>
@@ -16,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+import TokenView from '@/components/TokenView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 const store = useAuthStore()
