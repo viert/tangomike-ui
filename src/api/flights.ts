@@ -1,11 +1,11 @@
 import Axios from 'axios'
 import { wrap } from './wrap'
-import type { Flight } from './types'
+import type { Flight, Pagination } from './types'
 
 export const flights = {
-  async list(active = true, mineOnly = false) {
-    const url = `/api/v1/flights/?my=${mineOnly}&active=${active}`
-    return wrap<{ data: Flight[] }>(Axios.get(url))
+  async list(active = true, mineOnly = false, page = 1) {
+    const url = `/api/v1/flights/?my=${mineOnly}&active=${active}&page=${page}`
+    return wrap<Pagination<Flight>>(Axios.get(url))
   },
 
   async get(flightId: string) {

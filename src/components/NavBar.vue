@@ -1,11 +1,8 @@
 <template>
   <nav>
     <ul class="nav-bar">
-      <RouterLink to="/mytracks">
-        <li><span class="material-symbols-outlined"> timeline </span> My Tracks</li>
-      </RouterLink>
-      <RouterLink to="/search">
-        <li><span class="material-symbols-outlined"> search </span> Search</li>
+      <RouterLink to="/tracks">
+        <li><span class="material-symbols-outlined"> timeline </span> Tracks</li>
       </RouterLink>
       <hr />
       <TokenView />

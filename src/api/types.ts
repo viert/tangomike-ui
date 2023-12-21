@@ -70,3 +70,10 @@ export interface AppInfo {
   version: string
   go_runtime: RuntimeInfo
 }
+
+export interface Pagination<T> {
+  count: number
+  page: number
+  total_pages: number
+  data: T[]
+}
