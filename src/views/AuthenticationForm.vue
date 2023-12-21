@@ -21,10 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore, AuthState } from '@/stores/auth'
+import { useGlobalStore, AuthState } from '@/stores/global'
 import { ref } from 'vue'
 
-const store = useAuthStore()
+const store = useGlobalStore()
 const username = ref('')
 const password = ref('')
 
@@ -52,3 +52,4 @@ function changeMode() {
   padding: 12px;
 }
 </style>
+@/stores/global

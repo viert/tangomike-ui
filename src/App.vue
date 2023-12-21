@@ -11,21 +11,22 @@
 import AuthenticatingView from '@/views/AuthenticatingView.vue'
 import AuthenticationForm from '@/views/AuthenticationForm.vue'
 import { RouterView } from 'vue-router'
-import { useAuthStore, AuthState } from './stores/auth'
+import { useGlobalStore, AuthState } from './stores/global'
 import { computed, onMounted } from 'vue'
 import AlertBox from './components/AlertBox.vue'
 import SignupView from './views/SignupView.vue'
 import MaintenanceView from './views/MaintenanceView.vue'
 
-const store = useAuthStore()
+const store = useGlobalStore()
 
 const isAuthenticating = computed(() => store.authState === AuthState.Authenticating)
 const isNotLoggedIn = computed(() => store.authState === AuthState.NotLoggedIn)
 const isSignup = computed(() => store.authState === AuthState.Signup)
 const isMaintenance = computed(() => store.authState === AuthState.Maintenance)
 onMounted(async () => {
-  await store.loadAuth()
+  await Promise.all([store.loadAppInfo(), store.loadAuth()])
 })
 </script>
 
 <style lang="scss"></style>
+./stores/global

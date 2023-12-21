@@ -38,11 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore, AuthState } from '@/stores/auth'
+import { useGlobalStore, AuthState } from '@/stores/global'
 import { useMessagesStore } from '@/stores/messages'
 import { ref } from 'vue'
 
-const store = useAuthStore()
+const store = useGlobalStore()
 const messages = useMessagesStore()
 const username = ref('')
 const password = ref('')
@@ -91,3 +91,4 @@ $form-height: 450px;
   }
 }
 </style>
+@/stores/global

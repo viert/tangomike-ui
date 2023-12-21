@@ -1,9 +1,9 @@
-import { AuthState, useAuthStore } from '@/stores/auth'
+import { AuthState, useGlobalStore } from '@/stores/global'
 import { useMessagesStore } from '@/stores/messages'
 import type { AxiosError, AxiosResponse } from 'axios'
 
 export function wrap<T>(response: Promise<AxiosResponse>, catch401 = false): Promise<T | null> {
-  const authStore = useAuthStore()
+  const authStore = useGlobalStore()
   const msgStore = useMessagesStore()
   return response
     .then((resp) => {

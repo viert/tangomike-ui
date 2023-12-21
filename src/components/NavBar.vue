@@ -19,9 +19,9 @@
 
 <script setup lang="ts">
 import TokenView from '@/components/TokenView.vue'
-import { useAuthStore } from '@/stores/auth'
+import { useGlobalStore } from '@/stores/global'
 import { useMessagesStore } from '@/stores/messages'
-const store = useAuthStore()
+const store = useGlobalStore()
 const messages = useMessagesStore()
 
 async function logout() {
@@ -59,3 +59,4 @@ ul.nav-bar {
   }
 }
 </style>
+@/stores/global

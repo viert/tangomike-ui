@@ -11,10 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+import { useGlobalStore } from '@/stores/global'
 import { onMounted, onUnmounted } from 'vue'
 
-const store = useAuthStore()
+const store = useGlobalStore()
 let tm: number | null = null
 
 async function checkResolved() {
@@ -70,3 +70,4 @@ onUnmounted(() => {
   }
 }
 </style>
+@/stores/global

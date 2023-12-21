@@ -59,3 +59,14 @@ export interface StatusResponse<T> {
   data: T
   status: string
 }
+
+export interface RuntimeInfo {
+  version: string
+  arch: string
+  max_procs: number
+}
+
+export interface AppInfo {
+  version: string
+  go_runtime: RuntimeInfo
+}

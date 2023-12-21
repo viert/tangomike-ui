@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+import { useGlobalStore } from '@/stores/global'
 import { useMessagesStore } from '@/stores/messages'
 
-const store = useAuthStore()
+const store = useGlobalStore()
 const messages = useMessagesStore()
 function copyToken() {
   navigator.clipboard.writeText(store.currentUser!.token)
@@ -53,3 +53,4 @@ function copyToken() {
   }
 }
 </style>
+@/stores/global
