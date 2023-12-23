@@ -133,7 +133,9 @@ export const useFlightStore = defineStore('flights', () => {
 
     for (const flight_id in active) {
       const flight = active[flight_id]
-      const last = flight.track!.points[flight.track!.points.length - 1]
+      if (!flight.track || flight.track.points.length === 0) continue
+
+      const last = flight.track.points[flight.track!.points.length - 1]
       let rotation = last.hdg_true - 90
       const atype = 'Jet' // TODO actual aircraft types
 
