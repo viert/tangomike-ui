@@ -1,9 +1,9 @@
 <template>
-  <div class="btn-group">
+  <div class="btn-group btn-group-xs btn-switch">
     <button
       v-for="option in options"
       :key="option"
-      class="btn btn-sm"
+      class="btn"
       :class="{
         'btn-outline-secondary': modelValue !== option,
         'btn-primary': modelValue === option
@@ -24,4 +24,8 @@ function onClick(option: string) {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.btn-switch {
+  margin-right: 0.35rem;
+}
+</style>

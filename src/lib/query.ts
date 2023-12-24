@@ -10,7 +10,10 @@ export enum Convert {
 export function useQuery<
   C extends Convert,
   T = C extends Convert.STRING ? string : C extends Convert.BOOL ? boolean : number
->(key: string, convert: C): { value: ComputedRef<T | null>; setValue: (v: T | null) => void } {
+>(
+  key: string,
+  convert: C
+): { value: ComputedRef<T | null>; setValue: (v: T | null) => Promise<void> } {
   const route = useRoute()
   const router = useRouter()
   const intrValue: Ref<string | null> = ref(null)
@@ -30,14 +33,14 @@ export function useQuery<
     }
   })
 
-  function setValue(newValue: T | null) {
-    const { query } = route
-    if (newValue === null) {
+  async function setValue(newValue: T | null) {
+    const query = { ...route.query }
+    if (!newValue) {
       delete query[key]
     } else {
       query[key] = `${newValue}`
     }
-    router.push({ query })
+    await router.push({ query })
   }
 
   watch(

@@ -64,6 +64,7 @@ $sidebar-animation-time: 0.15s;
     }
 
     header {
+      height: 58px;
       padding: 1.25em 1em 0.5em 4.5em;
       background-color: #f0f0f4;
       border-bottom: 1px solid #eee;

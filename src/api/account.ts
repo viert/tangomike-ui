@@ -1,15 +1,17 @@
 import Axios from 'axios'
-import type { StatusResponse, User } from './types'
+import type { AccountResponse, StatusResponse } from './types'
 import { wrap } from './wrap'
 
 export const account = {
   async me(catch401 = true) {
-    return wrap<User>(Axios.get('/api/v1/account/me'), catch401)
+    return wrap<AccountResponse>(Axios.get('/api/v1/account/me'), catch401)
   },
 
   async authenticate(username: string, password: string) {
     const payload = { username, password }
-    return wrap<StatusResponse<User>>(Axios.post('/api/v1/account/authenticate', payload))
+    return wrap<StatusResponse<AccountResponse>>(
+      Axios.post('/api/v1/account/authenticate', payload)
+    )
   },
 
   async signup(
@@ -28,7 +30,7 @@ export const account = {
       last_name: lastName,
       email
     }
-    return wrap<User>(Axios.post('/api/v1/account/signup', payload))
+    return wrap<AccountResponse>(Axios.post('/api/v1/account/signup', payload))
   },
 
   async logout() {

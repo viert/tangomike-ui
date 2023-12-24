@@ -1,8 +1,13 @@
 export interface User {
   id: string
   username: string
-  token: string
+  first_name: string
+  last_name: string
   email: string
+}
+
+export interface AccountResponse extends User {
+  token: string
 }
 
 export interface TrackPoint {
@@ -48,6 +53,7 @@ export interface Flight {
     points: TrackPoint[]
     touchdowns: TouchDown[]
   }
+  user?: User
 }
 
 export interface FlightEvent {

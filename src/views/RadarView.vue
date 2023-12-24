@@ -29,16 +29,11 @@
         :style="defaultTrackStyle"
       />
     </MapBox>
-    <SideBar>
-      <NavBar></NavBar>
-    </SideBar>
   </div>
 </template>
 
 <script setup lang="ts">
 import '@maptiler/sdk/dist/maptiler-sdk.css'
-import SideBar from '@/components/SideBar.vue'
-import NavBar from '@/components/NavBar.vue'
 import MapBox from '@/components/map/MapBox.vue'
 import { onMounted, onUnmounted } from 'vue'
 import { useFlightStore } from '@/stores/flights'
