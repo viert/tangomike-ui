@@ -1,6 +1,6 @@
 import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { AppInfo, User } from '@/api/types'
+import type { AccountResponse, AppInfo, User } from '@/api/types'
 import api from '@/api'
 
 export enum AuthState {
@@ -12,9 +12,10 @@ export enum AuthState {
 }
 
 export const useGlobalStore = defineStore('global', () => {
-  const currentUser: Ref<User | null> = ref(null)
+  const currentUser: Ref<AccountResponse | null> = ref(null)
   const authState: Ref<AuthState> = ref(AuthState.Authenticating)
   const appInfo: Ref<AppInfo | null> = ref(null)
+  const menuOpen = ref(false)
 
   async function loadAuth() {
     const user = await api.account.me(true)
@@ -75,15 +76,31 @@ export const useGlobalStore = defineStore('global', () => {
     currentUser.value = null
   }
 
+  function openMenu() {
+    menuOpen.value = true
+  }
+
+  function closeMenu() {
+    menuOpen.value = false
+  }
+
+  function toggleMenu() {
+    menuOpen.value = !menuOpen.value
+  }
+
   return {
     currentUser,
     authState,
     appInfo,
+    menuOpen,
     loadAppInfo,
     loadAuth,
     setAuthState,
     authenticate,
     signup,
-    logout
+    logout,
+    openMenu,
+    closeMenu,
+    toggleMenu
   }
 })

@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar-wrap">
-    <div class="sidebar" :class="{ 'sidebar-open': open }">
+    <div class="sidebar" :class="{ 'sidebar-open': store.menuOpen }">
       <header>
         <h5>Track My Flight</h5>
       </header>
@@ -16,7 +16,7 @@
         </p>
       </div>
     </div>
-    <button @click="open = !open" class="menu">
+    <button @click="store.toggleMenu" class="menu">
       <span class="material-symbols-outlined"> menu </span>
     </button>
   </div>
@@ -24,9 +24,7 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/global'
-import { ref } from 'vue'
 
-const open = ref(false)
 const store = useGlobalStore()
 </script>
 

@@ -1,7 +1,10 @@
 <template>
   <nav>
     <ul class="nav-bar">
-      <RouterLink to="/tracks">
+      <RouterLink @click="store.closeMenu" to="/">
+        <li><span class="material-symbols-outlined"> explore </span> Radar</li>
+      </RouterLink>
+      <RouterLink @click="store.closeMenu" to="/tracks">
         <li><span class="material-symbols-outlined"> timeline </span> Tracks</li>
       </RouterLink>
       <hr />
