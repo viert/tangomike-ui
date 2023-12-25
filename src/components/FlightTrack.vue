@@ -5,11 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import MapGeoJSONSource from './map/MapGeoJSONSource.vue'
 import MapLayer from './map/MapLayer.vue'
+import { computed } from 'vue'
 import type { TrackPoint } from '@/api/types'
-import { makeStyler, type StylingOption } from '@/styler'
+import { makeStyler, type StylingOption } from '@/lib/styler'
 
 const props = withDefaults(
   defineProps<{

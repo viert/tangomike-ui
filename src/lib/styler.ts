@@ -1,5 +1,5 @@
 import { type Scale, scale } from 'chroma-js'
-import type { TrackPoint } from './api/types'
+import type { TrackPoint } from '../api/types'
 
 export const ScaleDefault = scale(['#66b900', '#3887fb', '#f15600']).mode('lch')
 

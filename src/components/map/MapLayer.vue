@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 import { useMapContext, useMapSourceId } from '@/lib/map'
-import type { LayerEvent } from '@/maplib'
+import type { LayerEvent } from '@/lib/map'
 import type { LayerSpecification } from '@maptiler/sdk'
-import { getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
   layerId: string

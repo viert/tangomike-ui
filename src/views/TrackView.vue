@@ -13,7 +13,7 @@ import MapBox from '@/components/map/MapBox.vue'
 import { useTrackStore } from '@/stores/tracks'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { defaultTrackStyle } from '@/styler'
+import { defaultTrackStyle } from '@/lib/styler'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,13 +21,15 @@ const store = useTrackStore()
 const isLoading = ref(true)
 
 const zoom = computed(() => {
-  if (store.bbox === null) return 4
-  const ratio = window.innerWidth / window.innerHeight
-  const bboxWidth = (store.bbox.ne.lng - store.bbox.sw.lng) / ratio
-  const bboxHeight = store.bbox.ne.lat - store.bbox.sw.lat
-  const maxMeasure = Math.max(bboxWidth, bboxHeight)
-  if (maxMeasure === 0) return 4
-  return 2.7 / maxMeasure
+  return 6
+  // if (store.bbox === null) return 4
+  // const ratio = window.innerWidth / window.innerHeight
+  // const bboxWidth = (store.bbox.ne.lng - store.bbox.sw.lng) / ratio
+  // const bboxHeight = store.bbox.ne.lat - store.bbox.sw.lat
+  // const maxMeasure = Math.min(bboxWidth, bboxHeight)
+  // console.log(maxMeasure)
+  // if (maxMeasure === 0) return 4
+  // return 5.4 / Math.sqrt(maxMeasure)
 })
 
 async function reload() {

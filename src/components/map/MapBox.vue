@@ -5,6 +5,7 @@
 </template>
 
 <script setup lang="ts">
+import '@maptiler/sdk/dist/maptiler-sdk.css'
 import { type ShallowRef, shallowRef, ref, onMounted, markRaw, onUnmounted } from 'vue'
 import { Map, MapStyle, config } from '@maptiler/sdk'
 

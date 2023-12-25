@@ -33,15 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import '@maptiler/sdk/dist/maptiler-sdk.css'
 import MapBox from '@/components/map/MapBox.vue'
-import { onMounted, onUnmounted } from 'vue'
-import { useFlightStore } from '@/stores/flights'
-import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
-import { planeClusterPaint, planeClusterCount, planeLayout, type LayerEvent } from '@/maplib'
 import MapLayer from '@/components/map/MapLayer.vue'
 import FlightTrack from '@/components/FlightTrack.vue'
-import { defaultTrackStyle } from '@/styler'
+import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
+import { onMounted, onUnmounted } from 'vue'
+import { useFlightStore } from '@/stores/flights'
+import { planeClusterPaint, planeClusterCount, planeLayout, type LayerEvent } from '@/lib/map'
+import { defaultTrackStyle } from '@/lib/styler'
 
 const store = useFlightStore()
 
