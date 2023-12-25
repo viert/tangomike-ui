@@ -17,7 +17,7 @@ const store = useMessagesStore()
 
 <style lang="scss">
 .alert-box {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   width: 400px;

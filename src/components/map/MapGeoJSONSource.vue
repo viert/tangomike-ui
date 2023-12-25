@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMap } from '@/stores/map'
+import { useMapContext } from '@/lib/map'
 import type { GeoJSONSource, GeoJSONSourceSpecification } from '@maptiler/sdk'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 const props = withDefaults(
@@ -17,8 +17,8 @@ const props = withDefaults(
   }>(),
   { lineMetrics: false, cluster: false, clusterMaxZoom: 14, clusterRadius: 30 }
 )
-const { map } = useMap()
 const initialised = ref(false)
+const map = useMapContext()
 
 onMounted(() => {
   if (map) {
@@ -36,23 +36,19 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (map) {
-    initialised.value = false
-    map.removeSource(props.sourceId)
-  }
+  initialised.value = false
+  map.removeSource(props.sourceId)
 })
 
 watch(
   () => props.data,
   (newData) => {
-    if (map) {
-      const source = map.getSource(props.sourceId) as GeoJSONSource | undefined
-      if (source) {
-        source.setData(newData)
-      }
+    const source = map.getSource(props.sourceId) as GeoJSONSource | undefined
+    if (source) {
+      source.setData(newData)
     }
   }
 )
-</script>
 
-<style scoped></style>
+defineExpose({ sourceId: props.sourceId })
+</script>

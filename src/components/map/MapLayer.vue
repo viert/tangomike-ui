@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
+import { useMapContext, useMapSourceId } from '@/lib/map'
 import type { LayerEvent } from '@/maplib'
-import { useMap } from '@/stores/map'
 import type { LayerSpecification } from '@maptiler/sdk'
 import { getCurrentInstance, onMounted, onUnmounted } from 'vue'
 
@@ -22,20 +22,8 @@ const emit = defineEmits<{
   (e: 'click', value: LayerEvent): void
 }>()
 
-const { map } = useMap()
-
-function findSourceId() {
-  let inst = getCurrentInstance()
-  while (inst) {
-    if (inst?.type.__name === 'MapGeoJSONSource') {
-      return inst.props.sourceId
-    }
-    inst = inst.parent
-  }
-  throw Error('Component usage error: MapLayer must be a descendant of a MapGeoJSONSource')
-}
-
-const sourceId = findSourceId()
+const map = useMapContext()
+const sourceId = useMapSourceId()
 
 function onMouseEnter(e: LayerEvent) {
   emit('mouseenter', e)
