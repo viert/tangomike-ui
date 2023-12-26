@@ -18,7 +18,7 @@ jobs:
         env:
           MAPTILER_KEY: ${{ secrets.MAPTILER_KEY }}
         run: |
-          echo "MAPTILER_KEY=${MAPTILER_KEY}" >> .env
+          echo "VITE_MAPTILER_KEY=\"${MAPTILER_KEY}\"" >> .env
       - name: Docker build
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
