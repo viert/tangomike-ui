@@ -24,7 +24,7 @@ const props = withDefaults(
   }
 )
 
-const API_KEY = 'Sgh2cI4VgHs03O2yMbry'
+const API_KEY = import.meta.env.VITE_MAPTILER_KEY
 
 async function loadImages(map: Map) {
   const promises: Promise<{ name: string; image: HTMLImageElement | ImageBitmap }>[] = []
