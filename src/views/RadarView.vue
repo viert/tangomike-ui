@@ -1,6 +1,6 @@
 <template>
   <div class="radar">
-    <MapBox>
+    <MapBox :images="MAP_IMAGES">
       <MapGeoJSONSource source-id="aircraft" :data="store.aircraftGeoJSON">
         <MapLayer
           layer-id="planes-clustered"
@@ -39,7 +39,13 @@ import FlightTrack from '@/components/FlightTrack.vue'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
 import { onMounted, onUnmounted } from 'vue'
 import { useFlightStore } from '@/stores/flights'
-import { planeClusterPaint, planeClusterCount, planeLayout, type LayerEvent } from '@/lib/map'
+import {
+  type LayerEvent,
+  planeClusterPaint,
+  planeClusterCount,
+  planeLayout,
+  MAP_IMAGES
+} from '@/lib/map'
 import { defaultTrackStyle } from '@/lib/styler'
 
 const store = useFlightStore()
