@@ -21,7 +21,7 @@ const props = withDefaults(
   }>(),
   {
     sourceId: 'selected-track',
-    lineWidth: 3
+    lineWidth: 2
   }
 )
 

@@ -76,17 +76,29 @@ export const trackStylingOptions: StylingOption[] = [
 
 export const defaultTrackStyle = trackStylingOptions.find((opt) => opt.stylingProp === 'alt_amsl')!
 
-export function makeStyler(choice: StylingOption, numLevels = 10) {
-  function getLevel(point: TrackPoint) {
-    const value = point[choice.stylingProp]
-    const lvl = Math.floor(((value as number) - choice.minValue) / levelSize)
-    return lvl > numLevels - 1 ? numLevels - 1 : lvl
-  }
-
+export function makeStyler(
+  choice: StylingOption,
+  numLevels = 10,
+  dynamicMin = false,
+  dynamicMax = true
+) {
   const scale = ColorScales[choice.colorScaleName]
-  const levelSize = (choice.maxValue - choice.minValue) / numLevels
 
   return (data: TrackPoint[]) => {
+    const minValue = dynamicMin
+      ? Math.min(...data.map((p) => p[choice.stylingProp] as number))
+      : choice.minValue
+    const maxValue = dynamicMax
+      ? Math.max(...data.map((p) => p[choice.stylingProp] as number))
+      : choice.maxValue
+    const levelSize = (maxValue - minValue) / numLevels
+
+    function getLevel(point: TrackPoint) {
+      const value = point[choice.stylingProp]
+      const lvl = Math.floor(((value as number) - minValue) / levelSize)
+      return lvl > numLevels - 1 ? numLevels - 1 : lvl
+    }
+
     const progress: (string | number)[] = []
     let currLevel = -1
     data.forEach((point, idx) => {
