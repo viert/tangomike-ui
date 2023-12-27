@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, reactive, shallowRef, type ShallowReactive, type ShallowRef } from 'vue'
 import type { Flight, FlightEvent, TouchDown, TrackPoint } from '@/api/types'
 import api from '@/api'
+import { renderTrackPointFeature } from '@/lib/aircraft'
 
 interface SubscriptionDescriptor {
   source: EventSource
@@ -136,30 +137,7 @@ export const useFlightStore = defineStore('flights', () => {
       if (!flight.track || flight.track.points.length === 0) continue
 
       const last = flight.track.points[flight.track!.points.length - 1]
-      let rotation = last.hdg_true - 90
-      const atype = 'Jet' // TODO actual aircraft types
-
-      let icon = 'airplane_jet'
-      let size = 0.1
-      if (atype !== 'Jet') {
-        icon = 'airplane_ga'
-        size = 0.014
-        rotation += 45
-      }
-      const feature: GeoJSON.Feature = {
-        type: 'Feature',
-        properties: {
-          flight_id,
-          rotation,
-          icon,
-          size
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: [last.lng, last.lat]
-        }
-      }
-
+      const feature = renderTrackPointFeature(last, flight_id)
       data.features.push(feature)
     }
 

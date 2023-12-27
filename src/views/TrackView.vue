@@ -3,9 +3,23 @@
   <div v-else-if="store.center" class="track-view">
     <MapBox :lat="store.center.lat" :lng="store.center.lng" :zoom="zoom" :images="MAP_IMAGES">
       <FlightTrack :data="store.flight!.track!.points" :style="defaultTrackStyle" />
+      <MapGeoJSONSource source-id="aircraft" :data="aircraftGeoJSON">
+        <MapLayer
+          layer-id="planes-unclustered"
+          layer-type="symbol"
+          :filter="['!has', 'point_count']"
+          :layout="planeLayout"
+        />
+      </MapGeoJSONSource>
     </MapBox>
     <div class="track-view-stat">
-      <ApexCharts :options="chartOptions" :series="series" height="100%" />
+      <ApexCharts
+        :options="chartOptions"
+        :series="series"
+        height="100%"
+        @mouse-move="onMouseMove"
+        @mouse-leave="onMouseLeave"
+      />
     </div>
   </div>
   <div class="track-corrupt" v-else>Track is empty</div>
@@ -16,16 +30,31 @@ import ApexCharts from 'vue3-apexcharts'
 import FlightTrack from '@/components/FlightTrack.vue'
 import LoadingBlock from '@/components/LoadingBlock.vue'
 import MapBox from '@/components/map/MapBox.vue'
+import MapLayer from '@/components/map/MapLayer.vue'
+import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
 import { useTrackStore } from '@/stores/tracks'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { defaultTrackStyle } from '@/lib/styler'
-import { MAP_IMAGES } from '@/lib/map'
+import { renderTrackPointFeature } from '@/lib/aircraft'
+import { MAP_IMAGES, planeLayout } from '@/lib/map'
+import type { TrackPoint } from '@/api/types'
 
 const route = useRoute()
 const router = useRouter()
 const store = useTrackStore()
 const isLoading = ref(true)
+const selectedTrackPoint = shallowRef<TrackPoint | null>(null)
+const aircraftGeoJSON = computed(() => {
+  const features = []
+  if (selectedTrackPoint.value) {
+    features.push(renderTrackPointFeature(selectedTrackPoint.value, store.flight!.flight_id))
+  }
+  return {
+    type: 'FeatureCollection',
+    features
+  } as GeoJSON.FeatureCollection
+})
 const chartOptions = computed(() => {
   const maxAlt = store.flight?.track
     ? Math.max(...store.flight.track.points.map((p) => p.alt_amsl)) + 500
@@ -115,6 +144,14 @@ async function reload() {
     return
   }
   isLoading.value = false
+}
+
+function onMouseMove(_1: any, _2: any, config: { seriesIndex: number; dataPointIndex: number }) {
+  selectedTrackPoint.value = store.flight!.track!.points[config.dataPointIndex]
+}
+
+function onMouseLeave() {
+  console.log('left')
 }
 
 watch(
