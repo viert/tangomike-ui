@@ -2,14 +2,25 @@
   <MapGeoJSONSource :source-id="sourceId" :data="trackGeoJSON" :line-metrics="true">
     <MapLayer :layer-id="compLayerId" layer-type="line" :layout="layout" :paint="paint" />
   </MapGeoJSONSource>
+  <MapGeoJSONSource :source-id="`${sourceId}-td`" :data="touchdownGeoJSON">
+    <MapLayer
+      @mouseenter="onTDMouseEnter"
+      @mouseleave="onTDMouseLeave"
+      :layer-id="compTDLayerId"
+      layer-type="symbol"
+      :layout="touchdownLayout"
+    />
+  </MapGeoJSONSource>
 </template>
 
 <script setup lang="ts">
 import MapGeoJSONSource from './map/MapGeoJSONSource.vue'
 import MapLayer from './map/MapLayer.vue'
-import { computed } from 'vue'
-import type { TrackPoint } from '@/api/types'
+import type { Flight } from '@/api/types'
+import type { LayerEvent } from '@/lib/map'
+import { touchdownLayout } from '@/lib/map'
 import { makeStyler, type StylingOption } from '@/lib/styler'
+import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -17,7 +28,7 @@ const props = withDefaults(
     layerId?: string
     lineWidth?: number
     style?: StylingOption
-    data: TrackPoint[]
+    flight: Flight
   }>(),
   {
     sourceId: 'selected-track',
@@ -25,18 +36,24 @@ const props = withDefaults(
   }
 )
 
+const emit = defineEmits<{
+  (e: 'touchdown-mouseenter', v: LayerEvent): void
+  (e: 'touchdown-mouseleave', v: LayerEvent): void
+}>()
+
 const layout = computed(() => ({
   'line-cap': 'round',
   'line-join': 'round'
 }))
 
 const compLayerId = computed(() => (props.layerId ? props.layerId : props.sourceId))
+const compTDLayerId = computed(() => `${compLayerId.value}-td`)
 
 const paint = computed(() => {
   const p: Record<string, any> = { 'line-color': 'black', 'line-width': props.lineWidth }
   if (props.style) {
     const styler = makeStyler(props.style)
-    const gradient = styler(props.data)
+    const gradient = styler(props.flight.track!.points)
     if (gradient && gradient.length > 0) {
       p['line-gradient'] = ['interpolate', ['linear'], ['line-progress'], ...gradient]
     }
@@ -53,10 +70,32 @@ const trackGeoJSON = computed((): GeoJSON.FeatureCollection => {
         properties: {},
         geometry: {
           type: 'LineString',
-          coordinates: props.data.map((point) => [point.lng, point.lat])
+          coordinates: props.flight.track!.points.map((point) => [point.lng, point.lat])
         }
       }
     ]
   }
 })
+
+const touchdownGeoJSON = computed(
+  (): GeoJSON.FeatureCollection => ({
+    type: 'FeatureCollection',
+    features: props.flight.track!.touchdowns.map((td) => ({
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Point',
+        coordinates: [td.lng, td.lat]
+      }
+    }))
+  })
+)
+
+function onTDMouseEnter(e: LayerEvent) {
+  emit('touchdown-mouseenter', e)
+}
+
+function onTDMouseLeave(e: LayerEvent) {
+  emit('touchdown-mouseleave', e)
+}
 </script>

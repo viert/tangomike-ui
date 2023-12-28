@@ -2,7 +2,7 @@
   <LoadingBlock v-if="isLoading" />
   <div v-else-if="store.center" class="track-view">
     <MapBox :lat="store.center.lat" :lng="store.center.lng" :zoom="zoom" :images="MAP_IMAGES">
-      <FlightTrack :data="store.flight!.track!.points" :style="defaultTrackStyle" />
+      <FlightTrack :flight="store.flight!" :style="defaultTrackStyle" />
       <MapGeoJSONSource source-id="aircraft" :data="aircraftGeoJSON">
         <MapLayer
           layer-id="planes-unclustered"

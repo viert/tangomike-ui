@@ -6,7 +6,7 @@
 import { useMapContext, useMapSourceId } from '@/lib/map'
 import type { LayerEvent } from '@/lib/map'
 import type { LayerSpecification } from '@maptiler/sdk'
-import { onMounted, onUnmounted, shallowRef, watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps<{
   layerId: string

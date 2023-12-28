@@ -25,11 +25,7 @@
           @click="onPlaneClick"
         />
       </MapGeoJSONSource>
-      <FlightTrack
-        v-if="store.selected?.track"
-        :data="store.selected?.track.points"
-        :style="defaultTrackStyle"
-      />
+      <FlightTrack v-if="store.selected" :flight="store.selected" :style="defaultTrackStyle" />
     </MapBox>
     <FlightPopover v-if="flightOver" :flight="flightOver.flight" :position="flightOver.position" />
     <BottomBar :open="store.selected !== null">
@@ -68,11 +64,15 @@ interface FlightPopoverConfig {
 
 const store = useFlightStore()
 const flightOver = shallowRef<FlightPopoverConfig | null>(null)
+let tm: number | null = null
 
 function onPlaneClick(e: LayerEvent) {
-  e.preventDefault()
   if (e.features) {
-    console.log('on plane click', e)
+    if (tm) {
+      clearTimeout(tm)
+      tm = null
+    }
+
     e.features.forEach((feat) => {
       const flightId: string | null = feat.properties.flightId
       if (flightId) {
@@ -102,8 +102,10 @@ function onPlaneMouseLeave() {
   flightOver.value = null
 }
 
-function onMapClick(e: LayerEvent) {
-  console.log('map click', e.defaultPrevented)
+function onMapClick() {
+  tm = setTimeout(() => {
+    store.select(null)
+  }, 50)
 }
 
 onMounted(() => {
