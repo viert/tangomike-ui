@@ -12,21 +12,12 @@
         />
       </MapGeoJSONSource>
     </MapBox>
-    <div class="track-view-stat">
-      <ApexCharts
-        :options="chartOptions"
-        :series="series"
-        height="100%"
-        @mouse-move="onMouseMove"
-        @mouse-leave="onMouseLeave"
-      />
-    </div>
+    <FlightStat :flight="store.flight!" @mouseover="onMouseOver" />
   </div>
   <div class="track-corrupt" v-else>Track is empty</div>
 </template>
 
 <script setup lang="ts">
-import ApexCharts from 'vue3-apexcharts'
 import FlightTrack from '@/components/FlightTrack.vue'
 import LoadingBlock from '@/components/LoadingBlock.vue'
 import MapBox from '@/components/map/MapBox.vue'
@@ -39,6 +30,7 @@ import { defaultTrackStyle } from '@/lib/styler'
 import { renderTrackPointFeature } from '@/lib/aircraft'
 import { MAP_IMAGES, planeLayout } from '@/lib/map'
 import type { TrackPoint } from '@/api/types'
+import FlightStat from '@/components/FlightStat.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -55,78 +47,12 @@ const aircraftGeoJSON = computed(() => {
     features
   } as GeoJSON.FeatureCollection
 })
-const chartOptions = computed(() => {
-  const maxAlt = store.flight?.track
-    ? Math.max(...store.flight.track.points.map((p) => p.alt_amsl)) + 500
-    : 5000
-  return {
-    chart: {
-      id: 'track-stats',
-      animations: {
-        enabled: false
-      }
-    },
-    xaxis: {
-      type: 'datetime'
-    },
-    colors: ['#3355aa', '#113388', '#cc4444'],
-    fill: {
-      colors: ['#3355aa20', '#113388']
-    },
-    stroke: {
-      width: 1
-    },
-    yaxis: [
-      {
-        title: { text: 'Altitude AMSL' },
-        labels: { formatter: (val: number) => `${Math.round(val)} ft` },
-        min: 0,
-        max: maxAlt
-      },
-      {
-        show: false,
-        labels: { formatter: (val: number) => `${Math.round(val)} ft` },
-        min: 0,
-        max: maxAlt
-      },
-      {
-        opposite: true,
-        title: { text: 'Groundspeed' },
-        labels: { formatter: (val: number) => `${Math.round(val)} kts` }
-      }
-    ]
-  }
-})
-
-const series = computed(() => {
-  return [
-    {
-      name: 'Altitude',
-      data: store.flight?.track
-        ? store.flight.track.points.map((p) => [p.timestamp, p.alt_amsl])
-        : [],
-      type: 'area'
-    },
-    {
-      name: 'Ground level',
-      data: store.flight?.track
-        ? store.flight.track.points.map((p) => [p.timestamp, p.gnd_height])
-        : [],
-      type: 'area'
-    },
-    {
-      name: 'Groundspeed',
-      data: store.flight?.track ? store.flight.track.points.map((p) => [p.timestamp, p.gs]) : [],
-      type: 'line'
-    }
-  ]
-})
 
 const zoom = computed(() => {
   // Refer to the link below for understanding the implementation details
   // https://docs.mapbox.com/help/glossary/zoom-level/#zoom-levels-and-geographical-distance
   if (store.bbox === null) return 13
-  const ratio = window.innerWidth / (window.innerHeight * 0.4)
+  const ratio = window.innerWidth / (window.innerHeight * 0.58)
   const bboxWidth = store.bbox.ne.lng - store.bbox.sw.lng / ratio
   const bboxHeight = store.bbox.ne.lat - store.bbox.sw.lat
   const maxMeasure = Math.max(bboxWidth, bboxHeight)
@@ -146,12 +72,8 @@ async function reload() {
   isLoading.value = false
 }
 
-function onMouseMove(_1: any, _2: any, config: { seriesIndex: number; dataPointIndex: number }) {
-  selectedTrackPoint.value = store.flight!.track!.points[config.dataPointIndex]
-}
-
-function onMouseLeave() {
-  console.log('left')
+function onMouseOver(detail: { seriesIndex: number; dataPointIndex: number }) {
+  selectedTrackPoint.value = store.flight!.track!.points[detail.dataPointIndex]
 }
 
 watch(
@@ -180,13 +102,8 @@ watch(
   height: 100vh;
 
   .map {
-    height: 60%;
+    height: 58%;
     position: relative;
-  }
-
-  .track-view-stat {
-    height: 40%;
-    padding: 0.5em;
   }
 }
 </style>

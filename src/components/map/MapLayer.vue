@@ -6,7 +6,7 @@
 import { useMapContext, useMapSourceId } from '@/lib/map'
 import type { LayerEvent } from '@/lib/map'
 import type { LayerSpecification } from '@maptiler/sdk'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, shallowRef, watch } from 'vue'
 
 const props = defineProps<{
   layerId: string
@@ -36,6 +36,15 @@ function onMouseLeave(e: LayerEvent) {
 function onClick(e: LayerEvent) {
   emit('click', e)
 }
+
+watch(
+  () => props.paint,
+  (paintOpts) => {
+    for (const key in paintOpts) {
+      map.setPaintProperty(props.layerId, key, paintOpts[key])
+    }
+  }
+)
 
 onMounted(() => {
   if (map) {

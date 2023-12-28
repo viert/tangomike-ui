@@ -8,6 +8,7 @@
 import '@maptiler/sdk/dist/maptiler-sdk.css'
 import { type ShallowRef, shallowRef, ref, onMounted, markRaw, onUnmounted } from 'vue'
 import { Map, MapStyle, config } from '@maptiler/sdk'
+import type { LayerEvent } from '@/lib/map'
 
 const props = withDefaults(
   defineProps<{
@@ -23,6 +24,8 @@ const props = withDefaults(
     images: () => ({})
   }
 )
+
+const emit = defineEmits<{ (e: 'click', v: LayerEvent): void }>()
 
 const API_KEY = import.meta.env.VITE_MAPTILER_KEY
 
@@ -54,6 +57,10 @@ const mapContainer: ShallowRef<HTMLElement | null> = shallowRef(null)
 const map: ShallowRef<Map | null> = shallowRef(null)
 const initialised = ref(false)
 
+function onMapClick(e: LayerEvent) {
+  emit('click', e)
+}
+
 onMounted(() => {
   if (!map.value) {
     config.apiKey = API_KEY
@@ -73,10 +80,12 @@ onMounted(() => {
       await loadImages(map.value!)
       initialised.value = true
     })
+    map.value.on('click', onMapClick)
   }
 })
 
 onUnmounted(() => {
+  map.value!.off('click', onMapClick)
   map.value!.remove()
 })
 

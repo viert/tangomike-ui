@@ -1,6 +1,6 @@
 <template>
   <div class="radar">
-    <MapBox :images="MAP_IMAGES">
+    <MapBox @click="onMapClick" :images="MAP_IMAGES">
       <MapGeoJSONSource source-id="aircraft" :data="store.aircraftGeoJSON">
         <MapLayer
           layer-id="planes-clustered"
@@ -20,6 +20,8 @@
           layer-type="symbol"
           :filter="['!has', 'point_count']"
           :layout="planeLayout"
+          @mouseenter="onPlaneMouseOver"
+          @mouseleave="onPlaneMouseLeave"
           @click="onPlaneClick"
         />
       </MapGeoJSONSource>
@@ -29,15 +31,20 @@
         :style="defaultTrackStyle"
       />
     </MapBox>
+    <FlightPopover v-if="flightOver" :flight="flightOver.flight" :position="flightOver.position" />
+    <BottomBar :open="store.selected !== null">
+      <FlightStat v-if="store.selected" :flight="store.selected" :slice-size="300" />
+    </BottomBar>
   </div>
 </template>
 
 <script setup lang="ts">
+import BottomBar from '@/components/BottomBar.vue'
 import MapBox from '@/components/map/MapBox.vue'
 import MapLayer from '@/components/map/MapLayer.vue'
 import FlightTrack from '@/components/FlightTrack.vue'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, shallowRef } from 'vue'
 import { useFlightStore } from '@/stores/flights'
 import {
   type LayerEvent,
@@ -47,18 +54,56 @@ import {
   MAP_IMAGES
 } from '@/lib/map'
 import { defaultTrackStyle } from '@/lib/styler'
+import type { Flight } from '@/api/types'
+import FlightPopover from '@/components/FlightPopover.vue'
+import FlightStat from '@/components/FlightStat.vue'
+
+interface FlightPopoverConfig {
+  flight: Flight
+  position: {
+    top: number
+    left: number
+  }
+}
 
 const store = useFlightStore()
+const flightOver = shallowRef<FlightPopoverConfig | null>(null)
 
 function onPlaneClick(e: LayerEvent) {
+  e.preventDefault()
   if (e.features) {
+    console.log('on plane click', e)
     e.features.forEach((feat) => {
-      const flightId: string | null = feat.properties.flight_id
+      const flightId: string | null = feat.properties.flightId
       if (flightId) {
         store.select(flightId)
       }
     })
   }
+}
+
+function onPlaneMouseOver(e: LayerEvent) {
+  if (e.features?.length) {
+    const feature: GeoJSON.Feature = e.features[0]
+    const flightId = feature.properties?.flightId
+    if (flightId) {
+      flightOver.value = {
+        flight: store.active[flightId],
+        position: {
+          top: e.originalEvent.clientY - 100,
+          left: e.originalEvent.clientX - 100
+        }
+      }
+    }
+  }
+}
+
+function onPlaneMouseLeave() {
+  flightOver.value = null
+}
+
+function onMapClick(e: LayerEvent) {
+  console.log('map click', e.defaultPrevented)
 }
 
 onMounted(() => {
@@ -80,6 +125,10 @@ onUnmounted(() => {
 .map {
   position: absolute;
   width: 100%;
+  height: 100%;
+}
+
+.bottom-bar .track-view-stat {
   height: 100%;
 }
 </style>
