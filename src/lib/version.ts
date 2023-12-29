@@ -1,1 +1,1 @@
-export const uiVersion = '1.6.1'
+export const uiVersion = '1.6.2'
