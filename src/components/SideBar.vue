@@ -10,7 +10,7 @@
       <div class="sidebar-footer">
         <p>&copy; 2023 Tango Mike Foxtrot</p>
         <p v-if="store.appInfo">
-          <b>Track My Flight</b> version {{ store.appInfo.version }}<br />
+          <b>Track My Flight</b> v. {{ store.appInfo.version }} <b>UI</b> v. {{ uiVersion }}<br />
           <b>Runtime</b> {{ store.appInfo.go_runtime.version }}
           {{ store.appInfo.go_runtime.arch }} maxprocs {{ store.appInfo.go_runtime.max_procs }}
         </p>
@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import { uiVersion } from '@/lib/version'
 import { useGlobalStore } from '@/stores/global'
 
 const store = useGlobalStore()
