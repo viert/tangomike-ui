@@ -92,6 +92,9 @@ export function makeStyler(
       ? Math.max(...data.map((p) => p[choice.stylingProp] as number))
       : choice.maxValue
     const levelSize = (maxValue - minValue) / numLevels
+    console.log(data.map((p) => p.distance))
+    const maxDistance = data[data.length - 1].distance
+    console.log('maxd', maxDistance)
 
     function getLevel(point: TrackPoint) {
       const value = point[choice.stylingProp]
@@ -104,7 +107,8 @@ export function makeStyler(
     data.forEach((point, idx) => {
       const lvl = getLevel(point)
       if (lvl != currLevel) {
-        const prc = idx / data.length
+        const prc = point.distance / maxDistance
+        console.log(idx, point.distance, maxDistance, prc, point.alt_amsl, lvl)
         const scalePos = (1 / numLevels) * lvl
         const c = scale(scalePos).rgb()
         const color = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
@@ -112,6 +116,7 @@ export function makeStyler(
         currLevel = lvl
       }
     })
+    console.log(progress)
     return progress
   }
 }

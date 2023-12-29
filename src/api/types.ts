@@ -28,6 +28,7 @@ export interface TrackPoint {
   on_rwy: boolean
   wind_vel: number
   wind_dir: number
+  distance: number
   timestamp: number
 }
 

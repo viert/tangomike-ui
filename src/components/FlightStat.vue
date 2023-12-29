@@ -43,9 +43,9 @@ const chartOptions = computed(() => {
     xaxis: {
       type: 'datetime'
     },
-    colors: ['#3355aa', '#113388', '#cc4444'],
+    colors: ['#3355aa', '#118833', '#cc4444'],
     fill: {
-      colors: ['#3355aa20', '#113388']
+      colors: ['#3355aa20', '#118833']
     },
     stroke: {
       width: 1
