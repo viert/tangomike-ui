@@ -40,6 +40,8 @@ import MapBox from '@/components/map/MapBox.vue'
 import MapLayer from '@/components/map/MapLayer.vue'
 import FlightTrack from '@/components/FlightTrack.vue'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
+import FlightPopover from '@/components/popover/FlightPopover.vue'
+import FlightStat from '@/components/FlightStat.vue'
 import { onMounted, onUnmounted, shallowRef } from 'vue'
 import { useFlightStore } from '@/stores/flights'
 import {
@@ -51,8 +53,6 @@ import {
 } from '@/lib/map'
 import { defaultTrackStyle } from '@/lib/styler'
 import type { Flight } from '@/api/types'
-import FlightPopover from '@/components/FlightPopover.vue'
-import FlightStat from '@/components/FlightStat.vue'
 
 interface FlightPopoverConfig {
   flight: Flight
@@ -90,8 +90,8 @@ function onPlaneMouseOver(e: LayerEvent) {
       flightOver.value = {
         flight: store.active[flightId],
         position: {
-          top: e.originalEvent.clientY - 100,
-          left: e.originalEvent.clientX - 100
+          top: e.originalEvent.clientY,
+          left: e.originalEvent.clientX
         }
       }
     }

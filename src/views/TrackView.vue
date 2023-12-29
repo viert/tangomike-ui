@@ -2,7 +2,12 @@
   <LoadingBlock v-if="isLoading" />
   <div v-else-if="store.center" class="track-view">
     <MapBox :lat="store.center.lat" :lng="store.center.lng" :zoom="zoom" :images="MAP_IMAGES">
-      <FlightTrack :flight="store.flight!" :style="defaultTrackStyle" />
+      <FlightTrack
+        :flight="store.flight!"
+        :style="defaultTrackStyle"
+        @touchdown-mouseenter="onTouchDownMouseEnter"
+        @touchdown-mouseleave="onTouchDownMouseLeave"
+      />
       <MapGeoJSONSource source-id="aircraft" :data="aircraftGeoJSON">
         <MapLayer
           layer-id="planes-unclustered"
@@ -13,6 +18,11 @@
       </MapGeoJSONSource>
     </MapBox>
     <FlightStat :flight="store.flight!" @mouseover="onMouseOver" />
+    <TouchdownPopover
+      v-if="activeTouchdown"
+      :position="activeTouchdown.position"
+      :touchdown="activeTouchdown.touchdown"
+    />
   </div>
   <div class="track-corrupt" v-else>Track is empty</div>
 </template>
@@ -28,15 +38,25 @@ import { computed, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { defaultTrackStyle } from '@/lib/styler'
 import { renderTrackPointFeature } from '@/lib/aircraft'
-import { MAP_IMAGES, planeLayout } from '@/lib/map'
-import type { TrackPoint } from '@/api/types'
+import { MAP_IMAGES, planeLayout, type LayerEvent } from '@/lib/map'
+import type { TouchDown, TrackPoint } from '@/api/types'
 import FlightStat from '@/components/FlightStat.vue'
+import TouchdownPopover from '@/components/popover/TouchdownPopover.vue'
+
+interface TouchdownPopoverConfig {
+  touchdown: TouchDown
+  position: {
+    top: number
+    left: number
+  }
+}
 
 const route = useRoute()
 const router = useRouter()
 const store = useTrackStore()
 const isLoading = ref(true)
 const selectedTrackPoint = shallowRef<TrackPoint | null>(null)
+const activeTouchdown = shallowRef<TouchdownPopoverConfig | null>(null)
 const aircraftGeoJSON = computed(() => {
   const features = []
   if (selectedTrackPoint.value) {
@@ -74,6 +94,26 @@ async function reload() {
 
 function onMouseOver(detail: { seriesIndex: number; dataPointIndex: number }) {
   selectedTrackPoint.value = store.flight!.track!.points[detail.dataPointIndex]
+}
+
+function onTouchDownMouseEnter(e: LayerEvent) {
+  if (e.features?.length) {
+    const feature: GeoJSON.Feature = e.features[0]
+    const tdIdx = feature.properties?.index
+    if (tdIdx !== undefined) {
+      activeTouchdown.value = {
+        touchdown: store.flight!.track!.touchdowns[tdIdx],
+        position: {
+          top: e.originalEvent.clientY,
+          left: e.originalEvent.clientX
+        }
+      }
+    }
+  }
+}
+
+function onTouchDownMouseLeave() {
+  activeTouchdown.value = null
 }
 
 watch(

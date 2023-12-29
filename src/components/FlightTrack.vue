@@ -80,9 +80,11 @@ const trackGeoJSON = computed((): GeoJSON.FeatureCollection => {
 const touchdownGeoJSON = computed(
   (): GeoJSON.FeatureCollection => ({
     type: 'FeatureCollection',
-    features: props.flight.track!.touchdowns.map((td) => ({
+    features: props.flight.track!.touchdowns.map((td, idx) => ({
       type: 'Feature',
-      properties: {},
+      properties: {
+        index: idx
+      },
       geometry: {
         type: 'Point',
         coordinates: [td.lng, td.lat]
