@@ -25,9 +25,20 @@
           @click="onPlaneClick"
         />
       </MapGeoJSONSource>
-      <FlightTrack v-if="store.selected" :flight="store.selected" :style="defaultTrackStyle" />
+      <FlightTrack
+        v-if="store.selected"
+        :flight="store.selected"
+        :style="defaultTrackStyle"
+        @touchdown-mouseenter="onTouchDownMouseEnter"
+        @touchdown-mouseleave="onTouchDownMouseLeave"
+      />
     </MapBox>
     <FlightPopover v-if="flightOver" :flight="flightOver.flight" :position="flightOver.position" />
+    <TouchdownPopover
+      v-if="activeTouchdown"
+      :position="activeTouchdown.position"
+      :touchdown="activeTouchdown.touchdown"
+    />
     <BottomBar :open="store.selected !== null">
       <FlightStat v-if="store.selected" :flight="store.selected" :slice-size="300" />
     </BottomBar>
@@ -42,6 +53,7 @@ import FlightTrack from '@/components/FlightTrack.vue'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
 import FlightPopover from '@/components/popover/FlightPopover.vue'
 import FlightStat from '@/components/FlightStat.vue'
+import TouchdownPopover from '@/components/popover/TouchdownPopover.vue'
 import { onMounted, onUnmounted, shallowRef } from 'vue'
 import { useFlightStore } from '@/stores/flights'
 import {
@@ -53,6 +65,7 @@ import {
 } from '@/lib/map'
 import { defaultTrackStyle } from '@/lib/styler'
 import type { Flight } from '@/api/types'
+import { useTouchdown } from '@/lib/touchdown'
 
 interface FlightPopoverConfig {
   flight: Flight
@@ -64,6 +77,7 @@ interface FlightPopoverConfig {
 
 const store = useFlightStore()
 const flightOver = shallowRef<FlightPopoverConfig | null>(null)
+const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown()
 let tm: number | null = null
 
 function onPlaneClick(e: LayerEvent) {

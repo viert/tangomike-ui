@@ -33,30 +33,22 @@ import LoadingBlock from '@/components/LoadingBlock.vue'
 import MapBox from '@/components/map/MapBox.vue'
 import MapLayer from '@/components/map/MapLayer.vue'
 import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
+import FlightStat from '@/components/FlightStat.vue'
+import TouchdownPopover from '@/components/popover/TouchdownPopover.vue'
 import { useTrackStore } from '@/stores/tracks'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { defaultTrackStyle } from '@/lib/styler'
 import { renderTrackPointFeature } from '@/lib/aircraft'
 import { MAP_IMAGES, planeLayout, type LayerEvent } from '@/lib/map'
-import type { TouchDown, TrackPoint } from '@/api/types'
-import FlightStat from '@/components/FlightStat.vue'
-import TouchdownPopover from '@/components/popover/TouchdownPopover.vue'
-
-interface TouchdownPopoverConfig {
-  touchdown: TouchDown
-  position: {
-    top: number
-    left: number
-  }
-}
+import type { TrackPoint } from '@/api/types'
+import { useTouchdown } from '@/lib/touchdown'
 
 const route = useRoute()
 const router = useRouter()
 const store = useTrackStore()
 const isLoading = ref(true)
 const selectedTrackPoint = shallowRef<TrackPoint | null>(null)
-const activeTouchdown = shallowRef<TouchdownPopoverConfig | null>(null)
 const aircraftGeoJSON = computed(() => {
   const features = []
   if (selectedTrackPoint.value) {
@@ -81,6 +73,8 @@ const zoom = computed(() => {
   return Math.min(Math.log2(c), 13)
 })
 
+const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown()
+
 async function reload() {
   isLoading.value = true
   const { flightId } = route.params
@@ -94,26 +88,6 @@ async function reload() {
 
 function onMouseOver(detail: { seriesIndex: number; dataPointIndex: number }) {
   selectedTrackPoint.value = store.flight!.track!.points[detail.dataPointIndex]
-}
-
-function onTouchDownMouseEnter(e: LayerEvent) {
-  if (e.features?.length) {
-    const feature: GeoJSON.Feature = e.features[0]
-    const tdIdx = feature.properties?.index
-    if (tdIdx !== undefined) {
-      activeTouchdown.value = {
-        touchdown: store.flight!.track!.touchdowns[tdIdx],
-        position: {
-          top: e.originalEvent.clientY,
-          left: e.originalEvent.clientX
-        }
-      }
-    }
-  }
-}
-
-function onTouchDownMouseLeave() {
-  activeTouchdown.value = null
 }
 
 watch(
