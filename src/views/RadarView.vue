@@ -54,7 +54,7 @@ import MapGeoJSONSource from '@/components/map/MapGeoJSONSource.vue'
 import FlightPopover from '@/components/popover/FlightPopover.vue'
 import FlightStat from '@/components/FlightStat.vue'
 import TouchdownPopover from '@/components/popover/TouchdownPopover.vue'
-import { onMounted, onUnmounted, shallowRef } from 'vue'
+import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { useFlightStore } from '@/stores/flights'
 import {
   type LayerEvent,
@@ -77,7 +77,9 @@ interface FlightPopoverConfig {
 
 const store = useFlightStore()
 const flightOver = shallowRef<FlightPopoverConfig | null>(null)
-const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown()
+const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown(
+  () => store.selected!
+)
 let tm: number | null = null
 
 function onPlaneClick(e: LayerEvent) {

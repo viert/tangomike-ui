@@ -92,9 +92,7 @@ export function makeStyler(
       ? Math.max(...data.map((p) => p[choice.stylingProp] as number))
       : choice.maxValue
     const levelSize = (maxValue - minValue) / numLevels
-    console.log(data.map((p) => p.distance))
-    const maxDistance = data[data.length - 1].distance
-    console.log('maxd', maxDistance)
+    const maxDistance = Math.max(...data.map((item) => item.distance)) || null
 
     function getLevel(point: TrackPoint) {
       const value = point[choice.stylingProp]
@@ -104,19 +102,23 @@ export function makeStyler(
 
     const progress: (string | number)[] = []
     let currLevel = -1
-    data.forEach((point, idx) => {
-      const lvl = getLevel(point)
-      if (lvl != currLevel) {
-        const prc = point.distance / maxDistance
-        console.log(idx, point.distance, maxDistance, prc, point.alt_amsl, lvl)
-        const scalePos = (1 / numLevels) * lvl
-        const c = scale(scalePos).rgb()
-        const color = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
-        progress.push(prc, color)
-        currLevel = lvl
-      }
-    })
-    console.log(progress)
+
+    if (maxDistance) {
+      data.forEach((point) => {
+        const lvl = getLevel(point)
+        if (lvl != currLevel) {
+          const prc = point.distance / maxDistance
+          if (progress.length && progress[progress.length - 2] === prc) {
+            return
+          }
+          const scalePos = (1 / numLevels) * lvl
+          const c = scale(scalePos).rgb()
+          const color = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+          progress.push(prc, color)
+          currLevel = lvl
+        }
+      })
+    }
     return progress
   }
 }

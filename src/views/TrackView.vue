@@ -73,7 +73,9 @@ const zoom = computed(() => {
   return Math.min(Math.log2(c), 13)
 })
 
-const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown()
+const { activeTouchdown, onTouchDownMouseEnter, onTouchDownMouseLeave } = useTouchdown(
+  () => store.flight!
+)
 
 async function reload() {
   isLoading.value = true

@@ -48,11 +48,11 @@ const layout = computed(() => ({
 
 const compLayerId = computed(() => (props.layerId ? props.layerId : props.sourceId))
 const compTDLayerId = computed(() => `${compLayerId.value}-td`)
+const styler = props.style ? makeStyler(props.style) : null
 
 const paint = computed(() => {
   const p: Record<string, any> = { 'line-color': 'black', 'line-width': props.lineWidth }
-  if (props.style) {
-    const styler = makeStyler(props.style)
+  if (styler) {
     const gradient = styler(props.flight.track!.points)
     if (gradient && gradient.length > 0) {
       p['line-gradient'] = ['interpolate', ['linear'], ['line-progress'], ...gradient]

@@ -46,7 +46,7 @@ async function loadImages(map: Map) {
       })
     )
   }
-  Promise.all(promises).then((values) => {
+  return Promise.all(promises).then((values) => {
     values.forEach((value) => {
       map.addImage(value.name, value.image)
     })

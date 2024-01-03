@@ -1,7 +1,6 @@
-import type { TouchDown } from '@/api/types'
+import type { Flight, TouchDown } from '@/api/types'
 import { shallowRef } from 'vue'
 import type { LayerEvent } from './map'
-import { useTrackStore } from '@/stores/tracks'
 
 export interface TouchdownPopoverConfig {
   touchdown: TouchDown
@@ -11,9 +10,8 @@ export interface TouchdownPopoverConfig {
   }
 }
 
-export const useTouchdown = () => {
+export const useTouchdown = (getFlight: () => Flight) => {
   const activeTouchdown = shallowRef<TouchdownPopoverConfig | null>(null)
-  const store = useTrackStore()
 
   function onTouchDownMouseEnter(e: LayerEvent) {
     if (e.features?.length) {
@@ -21,7 +19,7 @@ export const useTouchdown = () => {
       const tdIdx = feature.properties?.index
       if (tdIdx !== undefined) {
         activeTouchdown.value = {
-          touchdown: store.flight!.track!.touchdowns[tdIdx],
+          touchdown: getFlight().track!.touchdowns[tdIdx],
           position: {
             top: e.originalEvent.clientY,
             left: e.originalEvent.clientX
